@@ -1,0 +1,1 @@
+docker build -t "rocketpie/$(Split-Path -Leaf $PSScriptRoot)" $PSScriptRoot 
