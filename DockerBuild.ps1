@@ -9,18 +9,29 @@ $imageName = "rocketpie/$($directoryName)"
 
 if ($Clean) {
     $imageIdsToDelete = [System.Collections.ArrayList]::new()
-    docker images | % {
+    (docker images) | % {
+        Write-Debug "searching docker image output '$($_)' for '$($imageName)'..."
         if ($_ -match "$($imageName) +(\w+) + (\w+) +") {
+            Write-Debug "found image to delete: '$($Matches[2])'"
             $imageIdsToDelete.Add($Matches[2]) | Out-Null
         }
     }
     
-    docker ps -a | % { 
-        if ($_ -match '^(\w+) +(\w+) +') {
-            if ($Matches -eq 'container') { continue }
+    (docker ps -a) | % { 
+        Write-Debug "searching docker ps output '$($_)'..."
+        if ($_ -match '^(\w+) +([\w/]+) +') {
+            $containerId = $Matches[1]
+            $containerImage = $Matches[2]
+            Write-Debug "found a container using image '$($containerImage)'"
+
+            if ($containerImage -eq $imageName) {
+                "deleting container '$($containerId)' running '$($imageName)'..."
+                docker rm $Matches[1]
+            }
+                        
             foreach ($imageId in $imageIdsToDelete) {
-                if ($imageId.StartsWith($Matches[2])) {
-                    $containerId = $Matches[1]
+                Write-Debug "searching for unnamed containers running '$($imageId)'..."
+                if ($imageId.StartsWith($containerImage)) {                    
                     "deleting container '$($containerId)'"
                     docker rm $containerId
                 }
@@ -33,7 +44,9 @@ if ($Clean) {
         docker rmi $imageId
     }
     
+    "Done."
     return
 }
 
 docker build -t $imageName $AutomateDirectory 
+"Done."
