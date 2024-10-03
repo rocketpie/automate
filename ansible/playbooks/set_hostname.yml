@@ -1,0 +1,16 @@
+- name: Network Getting Started First Playbook
+  connection: ansible.builtin.ssh
+  hosts: all
+  tasks:
+
+    - name: Set a hostname specifying strategy
+      ansible.builtin.hostname:
+        name: ansibletarget1
+        use: systemd
+
+    - name: Display the config
+      debug:
+        msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
+
+
+        

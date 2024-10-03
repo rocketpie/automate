@@ -8,4 +8,4 @@
 . ${BASH_SOURCE%/*}/enable_ssh_client.sh
 
 ssh-keyscan -H ansibletarget.fritz.box >> ~/.ssh/known_hosts
-ansible all -i ansibletarget.fritz.box, -c ansible.netcommon.network_cli -u automator -k -m vyos.vyos.vyos_facts -e ansible_network_os=vyos.vyos.vyos
+ansible-playbook -i /etc/ansible/inventory/test.yml -k /playbooks/set_hostname.yml

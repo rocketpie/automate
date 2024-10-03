@@ -1,0 +1,6 @@
+
+new_hosts:
+  hosts:
+    ansibletarget:
+      ansible_host: ansibletarget.fritz.box
+      ansible_user: automator
